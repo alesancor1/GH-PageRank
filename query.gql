@@ -1,0 +1,15 @@
+{
+    user(login:"${name}") {
+        avatarUrl
+        followers(first:${followersLimit}) {
+            nodes {
+                login
+            }
+        }
+        following(first:${followingLimit}) {
+            nodes {
+                login
+            }
+        }
+    }
+}
