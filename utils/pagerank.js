@@ -23,7 +23,7 @@ async function pageRank(node, graph, d=0.85, p=3) {
     return rank;
 }
 
-function _getNodeFromGitHub(name, followersLimit = 3, followingLimit = 3) {
+function _getNodeFromGitHub(name, followersLimit = 10, followingLimit = 10) {
 
     const headers = { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` };
 

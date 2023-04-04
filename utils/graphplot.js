@@ -5,8 +5,8 @@ const d3 = d3n.d3;
 
 module.exports = (graph) => {
     const margin = {top: 10, right: 30, bottom: 30, left: 40};
-    const width = 400 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const width = 1280 - margin.left - margin.right;
+    const height = 720 - margin.top - margin.bottom;
 
     const svg = d3n
         .createSVG(width + margin.left + margin.right, height + margin.top + margin.bottom)
@@ -99,6 +99,6 @@ module.exports = (graph) => {
             .attr("x", function (d) { return d.x; })
             .attr("y", function(d) { return d.y; });
 
-        fs.writeFileSync(`${__dirname}/graph.svg`, d3n.svgString());
+        fs.writeFileSync(`${__dirname}/../graph.svg`, d3n.svgString());
     });     
 }
