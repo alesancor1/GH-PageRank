@@ -1,10 +1,19 @@
 import { fileURLToPath } from 'url';
+import { Graph } from './Graph';
 import { dirname } from 'path';
 import axios from "axios";
 import fs from "fs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+/**
+ * PageRank algorithm
+ * @param {Object} node GraphQL node containing login, followers and following
+ * @param {Graph} graph Graph object to build during the recursive calls
+ * @param {Number} d PageRank damping factor
+ * @param {Number} p PageRank recursion depth
+ * @returns Rank of the given node
+ */
 export async function pageRank(node, graph, d=0.85, p=3) {
 
     if (typeof node === "string") 
@@ -25,6 +34,7 @@ export async function pageRank(node, graph, d=0.85, p=3) {
     return rank;
 }
 
+/* GraphQL request to get node */
 function _getNodeFromGitHub(name, followersLimit = 10, followingLimit = 10) {
 
     // Configure GraphQL request
