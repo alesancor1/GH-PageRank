@@ -25,19 +25,23 @@ async function pageRank(node, graph, d=0.85, p=3) {
 
 function _getNodeFromGitHub(name, followersLimit = 10, followingLimit = 10) {
 
+    // Configure GraphQL request
     const headers = { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` };
-
     const query = fs.readFileSync(`${__dirname}/../static/query.gql`, 'utf8')
         .replace(/\${.+}/g, (varName) => ({ name, followersLimit, followingLimit })[varName.slice(2, -1)]);
     
-    return axios.post(`https://api.github.com/graphql`, { query }, { headers }).then(res => 
-        ({
+    // Call graphQL
+    return axios.post(`https://api.github.com/graphql`, { query }, { headers }).then(res => {
+        if (res.data?.errors?.length > 0) throw new Error(res.data.errors[0].message);
+        
+        return {
             login: name,
             followers: res.data.data.user.followers.nodes.map(n => ({ login: n.login })),
             following: res.data.data.user.following.nodes.map(n => ({ login: n.login })),
             avatarUrl: res.data.data.user.avatarUrl ?? "https://avatars.githubusercontent.com/u/583231?v=4"
-        })
-    ).catch(err => {
-        throw new Error("Error fetching data from GitHub: " + err.message);
+        }
+    }).catch(err => {
+        console.log("Error fetching data from GitHub: " + err.message);
+        process.exit(1);
     });
 }
