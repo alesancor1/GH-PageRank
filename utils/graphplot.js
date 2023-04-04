@@ -5,8 +5,8 @@ const d3 = d3n.d3;
 
 module.exports = (graph) => {
     const margin = {top: 10, right: 30, bottom: 30, left: 40};
-    const width = 1280 - margin.left - margin.right;
-    const height = 720 - margin.top - margin.bottom;
+    const width = 1920 - margin.left - margin.right;
+    const height = 1080 - margin.top - margin.bottom;
 
     const svg = d3n
         .createSVG(width + margin.left + margin.right, height + margin.top + margin.bottom)
@@ -63,15 +63,16 @@ module.exports = (graph) => {
         .data(graph.nodes)
         .join("text")
         .text(function (d) { return d.login; })
-        .style("text-anchor", "middle")
+        .style("text-anchor", "auto")
         .style("fill", "#555")
         .style("font-family", "Arial")
-        .style("font-size", 12);
+        .style("font-size", 12)
+        .style("visibility", "hidden");
 
     //force simulation
     const simulation = d3.forceSimulation(graph.nodes)
         .force("link", d3.forceLink(graph.edges).id(d => d.login))
-        .force("charge", d3.forceManyBody().strength(-400))
+        .force("charge", d3.forceManyBody().strength(-graph.nodes.length * 5))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
     // Let's list the force we wanna apply on the network
@@ -96,8 +97,10 @@ module.exports = (graph) => {
             .attr("y", function(d) { return d.y - 40 * d.rank; });
 
         label
-            .attr("x", function (d) { return d.x; })
+            .attr("x", function (d) { return d.x + 40 * d.rank; })
             .attr("y", function(d) { return d.y; });
+
+        image.append("title").text(d => `${d.login}\nrank: ${d.index + 1}\nscore: ${d.rank.toFixed(2)}`)
 
         fs.writeFileSync(`${__dirname}/../graph.svg`, d3n.svgString());
     });     
