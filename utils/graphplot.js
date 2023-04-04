@@ -6,8 +6,8 @@ const d3 = d3n.d3;
 
 export function  svgPlot(graph) {
     const margin = {top: 10, right: 30, bottom: 30, left: 40};
-    const width = 1280 - margin.left - margin.right;
-    const height = 720 - margin.top - margin.bottom;
+    const width = 800 - margin.left - margin.right;
+    const height = 800 - margin.top - margin.bottom;
 
     const svg = d3n
         .createSVG(width + margin.left + margin.right, height + margin.top + margin.bottom)

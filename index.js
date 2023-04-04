@@ -1,4 +1,4 @@
-import { Graph } from "./utils/graph.js"
+import { Graph } from "./utils/Graph.js"
 import { pageRank } from "./utils/pagerank.js";
 
 /* Main program */
