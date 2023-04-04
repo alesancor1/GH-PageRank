@@ -1,12 +1,13 @@
-const D3Node = require('d3-node');
-const fs = require('fs');
+import D3Node from 'd3-node';
+import fs from 'fs';
+
 const d3n = new D3Node();
 const d3 = d3n.d3;
 
-module.exports = (graph) => {
+export function  svgPlot(graph) {
     const margin = {top: 10, right: 30, bottom: 30, left: 40};
-    const width = 1920 - margin.left - margin.right;
-    const height = 1080 - margin.top - margin.bottom;
+    const width = 1280 - margin.left - margin.right;
+    const height = 720 - margin.top - margin.bottom;
 
     const svg = d3n
         .createSVG(width + margin.left + margin.right, height + margin.top + margin.bottom)
@@ -72,8 +73,9 @@ module.exports = (graph) => {
     //force simulation
     const simulation = d3.forceSimulation(graph.nodes)
         .force("link", d3.forceLink(graph.edges).id(d => d.login))
-        .force("charge", d3.forceManyBody().strength(-graph.nodes.length * 5))
-        .force("center", d3.forceCenter(width / 2, height / 2));
+        .force("charge", d3.forceManyBody().strength(graph.edges.length * 5))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collide", d3.forceCollide().radius(d => 40 * d.rank + 10));
 
     // Let's list the force we wanna apply on the network
     simulation
@@ -102,6 +104,8 @@ module.exports = (graph) => {
 
         image.append("title").text(d => `${d.login}\nrank: ${d.index + 1}\nscore: ${d.rank.toFixed(2)}`)
 
-        fs.writeFileSync(`${__dirname}/../graph.svg`, d3n.svgString());
+        fs.writeFileSync(`${process.cwd()}/graph.svg`, d3n.svgString());
     });     
 }
+
+export default { svgPlot }

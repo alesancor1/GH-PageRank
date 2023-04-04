@@ -1,9 +1,11 @@
-const axios = require('axios');
-const fs = require('fs');
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import axios from "axios";
+import fs from "fs";
 
-module.exports = pageRank;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-async function pageRank(node, graph, d=0.85, p=3) {
+export async function pageRank(node, graph, d=0.85, p=3) {
 
     if (typeof node === "string") 
         node = await _getNodeFromGitHub(node);

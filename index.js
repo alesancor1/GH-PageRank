@@ -1,5 +1,5 @@
-const Graph = require('./utils/Graph');
-const pageRank = require('./utils/pagerank');
+import { Graph } from "./utils/graph.js"
+import { pageRank } from "./utils/pagerank.js";
 
 /* Main program */
 function main() {

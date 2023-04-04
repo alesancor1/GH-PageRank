@@ -1,6 +1,6 @@
-const graphPlot = require('./graphplot');
+import { svgPlot } from "./graphplot.js";
 
-module.exports = class Graph {
+export class Graph {
     constructor(nodes, edges) {
         this.nodes = nodes ?? [];
         this.edges = edges ?? [];
@@ -25,6 +25,6 @@ module.exports = class Graph {
     }
 
     plot() {
-        graphPlot(this);     
+        svgPlot(this.sorted());     
     }
 }
