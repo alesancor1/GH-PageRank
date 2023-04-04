@@ -2,12 +2,16 @@ import D3Node from 'd3-node';
 const d3n = new D3Node();
 const d3 = d3n.d3;
 
-export function svgPlot(graph) {
+/** Generate the SVG file from a given graph
+ * @param {Graph} graph Graph to generate SVG from
+ * @returns {Promise<string>} SVG file contents
+*/
+export function generateSvg(graph) {
     return new Promise((resolve, _) => {
 
         const margin = {top: 10, right: 30, bottom: 30, left: 40};
-        const width = 800 - margin.left - margin.right;
-        const height = 800 - margin.top - margin.bottom;
+        const width = 960 - margin.left - margin.right;
+        const height = 540 - margin.top - margin.bottom;
 
         const svg = d3n
             .createSVG(width + margin.left + margin.right, height + margin.top + margin.bottom)

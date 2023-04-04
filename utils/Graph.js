@@ -9,7 +9,7 @@
  * @property {string} target Target node login
  */
 
-import { svgPlot } from "./graphplot.js";
+import { generateSvg } from "./graphplot.js";
 import { writeFileSync } from "fs";
 
 /**
@@ -59,7 +59,7 @@ export class Graph {
      * @returns {Promise<string>} SVG file contents
     */
     async plot(save = true, path = `${process.cwd()}/graph.svg`) {
-        const svg = await svgPlot(this.sorted());
+        const svg = await generateSvg(this.sorted());
         if (save) writeFileSync(path, svg);
         return svg;
     }

@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'url';
-import { Graph } from './Graph';
 import { dirname } from 'path';
 import axios from "axios";
 import fs from "fs";
