@@ -13,16 +13,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  * @param {Number} p PageRank recursion depth
  * @returns Rank of the given node
  */
-export async function pageRank(node, graph, d=0.85, p=3) {
+export async function pageRank(node, graph, d=0.85, p=3, followLimit = 10) {
 
     if (typeof node === "string") 
-        node = await _getNodeFromGitHub(node);
+        node = await _getNodeFromGitHub(node, followLimit);
 
     // Calculate rank
     let rank = 1 - d;
     if (p > 0) {  
         rank = rank + d * (await node.followers.reduce(async (acc, n) => {
-            n = await _getNodeFromGitHub(n.login);
+            n = await _getNodeFromGitHub(n.login, followLimit);
             return (await acc) + (await pageRank(n, graph, d, p-1)) / n.following.length;
         }, 0));
 
@@ -34,12 +34,12 @@ export async function pageRank(node, graph, d=0.85, p=3) {
 }
 
 /* GraphQL request to get node */
-function _getNodeFromGitHub(name, followersLimit = 10, followingLimit = 10) {
+function _getNodeFromGitHub(name, limit) {
 
     // Configure GraphQL request
     const headers = { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` };
     const query = fs.readFileSync(`${__dirname}/../static/query.gql`, 'utf8')
-        .replace(/\${.+}/g, (varName) => ({ name, followersLimit, followingLimit })[varName.slice(2, -1)]);
+        .replace(/\${.+}/g, (varName) => ({ name, limit })[varName.slice(2, -1)]);
     
     // Call graphQL
     return axios.post(`https://api.github.com/graphql`, { query }, { headers }).then(res => {

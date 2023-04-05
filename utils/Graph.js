@@ -58,9 +58,20 @@ export class Graph {
      * @param {string} path - Path to save the SVG file
      * @returns {Promise<string>} SVG file contents
     */
-    async plot(save = true, path = `${process.cwd()}/graph.svg`) {
+    async plot(save = true, fileName = "graph.svg") {
         const svg = await generateSvg(this.sorted());
-        if (save) writeFileSync(path, svg);
+        if (save) writeFileSync(`${process.cwd()}/${fileName}`, svg);
         return svg;
+    }
+
+    /** Saves the graph as a JSON file
+     * @param {boolean} save - Whether to save the JSON file
+     * @param {string} path - Path to save the JSON file
+     * @returns {string} JSON file contents
+     * */
+    json(save = true, fileName = "graph.json") {
+        const json = JSON.stringify(this, null, 2);
+        if (save) writeFileSync(`${process.cwd()}/${fileName}`, json);
+        return json;
     }
 }

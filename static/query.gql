@@ -1,12 +1,12 @@
 {
     user(login:"${name}") {
         avatarUrl
-        followers(first:${followersLimit}) {
+        followers(first:${limit}) {
             nodes {
                 login
             }
         }
-        following(first:${followingLimit}) {
+        following(first:${limit}) {
             nodes {
                 login
             }
