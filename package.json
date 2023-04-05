@@ -4,10 +4,23 @@
   "description": "PageRank implementation in Node.js for visualizing GitHub network graphs",
   "main": "./bin/index.js",
   "type": "module",
+  "files":[
+    "bin",
+    "static",
+    "utils"
+  ],
   "bin": {
     "gh-pagerank": "./bin/index.js",
     "ghpagerank": "./bin/index.js"
   },
+  "keywords": [
+    "cli",
+    "github",
+    "pagerank",
+    "network",
+    "graph",
+    "visualization"
+  ],
   "author": "alesancor1",
   "license": "MIT",
   "dependencies": {
