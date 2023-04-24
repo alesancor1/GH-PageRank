@@ -3,7 +3,8 @@
  * @property {string} login GitHub login
  * @property {number} rank PageRank rank
  * @property {string} avatarUrl GitHub avatar URL
- * @property {Array<Node>} categories User top categories
+ * @property {string} mainCategory Main category
+ * @property {string[]} otherCategories Other categories
  * 
  * @typedef {Object} Edge Graph Edge
  * @property {string} source Source node login
@@ -30,10 +31,10 @@ export class Graph {
      * @param {Node} node - Graph node to rank
      * @param {number} rank - PageRank rank
      */
-    rankNode(node, rank, categories=[]) {
+    rankNode(node, rank, mainCategory, otherCategories) {
         let n = this.nodes.find(n => n.login === node.login);
         if (n) n.rank = rank;
-        else this.nodes.push({ login: node.login, rank, avatarUrl: node.avatarUrl, categories: categories ?? [] });
+        else this.nodes.push({ login: node.login, rank, avatarUrl: node.avatarUrl, mainCategory, otherCategories });
     }
 
     /** Add edges to the graph based on a node's followers
@@ -46,7 +47,7 @@ export class Graph {
             }
         });
     }
-    
+
     /** Sorts the graph nodes by rank. Original graph is not modified
      * @returns {Graph} Sorted graph
      */

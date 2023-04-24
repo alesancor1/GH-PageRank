@@ -30,10 +30,12 @@ export async function pageRank(node, graph, d = 0.85, p = 3, followLimit = 10, n
             return (await acc) + (await pageRank(n, graph, d, p - 1)) / n.following.length;
         }, 0));
 
-        let categories = await _getCategoriesFromUser(node, numTopics);
-        
+        const categories = await _getCategoriesFromUser(node, numTopics);
+        const mainCategory = categories.mainCategory;
+        const otherCategories = categories.otherCategories;
+
         // Build graph
-        graph.rankNode(node, rank, categories);
+        graph.rankNode(node, rank, mainCategory, otherCategories);
         if (p > 1) graph.addFollowers(node);
     }
     return rank;
@@ -49,8 +51,7 @@ async function _getCategoriesFromUser(node) {
     });
 
     const mlKeywords = new Set([
-        'machine learning', 'ml', 'deep learning', 'neural network',
-        'artificial intelligence', 'ai', 'data mining', 'data science'
+        'machine learning', 'deep learning', 'neural network'
     ]);
     const webKeywords = new Set([
         'web', 'html', 'css', 'javascript', 'react', 'angular', 'vue', 'frontend', 'backend'
@@ -68,54 +69,40 @@ async function _getCategoriesFromUser(node) {
         'unity', 'unreal', 'game development', 'game design'
     ]);
 
-    const topics = preprocessedDescriptions.reduce((result, description) => {
-        let mlCount = 0;
-        let webCount = 0;
-        let mobileCount = 0;
-        let devOpsCount = 0;
-        let securityCount = 0;
-        let gameDevCount = 0;
+    let mlCount = 0;
+    let webCount = 0;
+    let mobileCount = 0;
+    let devOpsCount = 0;
+    let securityCount = 0;
+    let gameDevCount = 0;
 
-        for (const term of description.split(' ')) {
-            if (mlKeywords.has(term)) {
-                mlCount++;
-            }
-            if (webKeywords.has(term)) {
-                webCount++;
-            }
-            if (mobileKeywords.has(term)) {
-                mobileCount++;
-            }
-            if (devOpsKeywords.has(term)) {
-                devOpsCount++;
-            }
-            if (securityKeywords.has(term)) {
-                securityCount++;
-            }
-            if (gameDevKeywords.has(term)) {
-                gameDevCount++;
-            }
+    for (const description of preprocessedDescriptions) {
+        for (const keyword of description) {
+            if (mlKeywords.has(keyword)) mlCount++;
+            if (webKeywords.has(keyword)) webCount++;
+            if (mobileKeywords.has(keyword)) mobileCount++;
+            if (devOpsKeywords.has(keyword)) devOpsCount++;
+            if (securityKeywords.has(keyword)) securityCount++;
+            if (gameDevKeywords.has(keyword)) gameDevCount++;
         }
+    }
 
-        if (mlCount > 0 && mlCount >= webCount && mlCount >= mobileCount && mlCount >= devOpsCount && mlCount >= securityCount && mlCount >= gameDevCount) {
-            result.push('Machine Learning');
-        } else if (webCount > 0 && webCount >= mobileCount && webCount >= devOpsCount && webCount >= securityCount && webCount >= gameDevCount) {
-            result.push('Web Development');
-        } else if (mobileCount > 0 && mobileCount >= devOpsCount && mobileCount >= securityCount && mobileCount >= gameDevCount) {
-            result.push('Mobile Development');
-        } else if (devOpsCount > 0 && devOpsCount >= securityCount && devOpsCount >= gameDevCount) {
-            result.push('DevOps');
-        } else if (securityCount > 0 && securityCount >= gameDevCount) {
-            result.push('Security');
-        } else if (gameDevCount > 0) {
-            result.push('Game Development');
-        }
+    const categories = [
+        { name: 'Machine Learning', count: mlCount },
+        { name: 'Web Development', count: webCount },
+        { name: 'Mobile Development', count: mobileCount },
+        { name: 'DevOps', count: devOpsCount },
+        { name: 'Security', count: securityCount },
+        { name: 'Game Development', count: gameDevCount }
+    ];
 
-        return [...new Set(result)]
-    }, []);
+    categories.sort((a, b) => b.count - a.count);
 
+    return {
+        mainCategory: categories.slice(0, 1).map(category => category.name),
+        otherCategories: categories.slice(1, 3).map(category => category.name)
+    };
 
-    return [...new Set(topics)];
 }
 
 /* GraphQL request to get node */
