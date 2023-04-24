@@ -17,7 +17,7 @@ const stemmer = natural.PorterStemmer;
  * @param {Number} p PageRank recursion depth
  * @returns Rank of the given node
  */
-export async function pageRank(node, graph, d = 0.85, p = 3, followLimit = 10, numTopics = 3) {
+export async function pageRank(node, graph, d = 0.85, p = 3, followLimit = 10, numTopics = 4) {
 
     if (typeof node === "string")
         node = await _getNodeFromGitHub(node, followLimit);
@@ -41,7 +41,7 @@ export async function pageRank(node, graph, d = 0.85, p = 3, followLimit = 10, n
     return rank;
 }
 
-async function _getCategoriesFromUser(node) {
+async function _getCategoriesFromUser(node, numTopics = 4) {
     const descriptions = node.repositories.map(repo => repo.description || '');
     const preprocessedDescriptions = descriptions.map(description => {
         const tokens = tokenizer.tokenize(description.toLowerCase());
@@ -76,14 +76,28 @@ async function _getCategoriesFromUser(node) {
     let securityCount = 0;
     let gameDevCount = 0;
 
+
     for (const description of preprocessedDescriptions) {
-        for (const keyword of description) {
-            if (mlKeywords.has(keyword)) mlCount++;
-            if (webKeywords.has(keyword)) webCount++;
-            if (mobileKeywords.has(keyword)) mobileCount++;
-            if (devOpsKeywords.has(keyword)) devOpsCount++;
-            if (securityKeywords.has(keyword)) securityCount++;
-            if (gameDevKeywords.has(keyword)) gameDevCount++;
+        const tokens = description.split(' ');
+        // trim tokens
+        for (let i = 0; i < tokens.length; i++) {
+            tokens[i] = tokens[i].trim();
+        }
+        // count keywords
+        for (const token of tokens) {
+            if (mlKeywords.has(token)) {
+                mlCount++;
+            } else if (webKeywords.has(token)) {
+                webCount++;
+            } else if (mobileKeywords.has(token)) {
+                mobileCount++;
+            } else if (devOpsKeywords.has(token)) {
+                devOpsCount++;
+            } else if (securityKeywords.has(token)) {
+                securityCount++;
+            } else if (gameDevKeywords.has(token)) {
+                gameDevCount++;
+            }
         }
     }
 
@@ -98,9 +112,12 @@ async function _getCategoriesFromUser(node) {
 
     categories.sort((a, b) => b.count - a.count);
 
+    console.log(node.login);
+    console.log(categories);
+
     return {
         mainCategory: categories.slice(0, 1).map(category => category.name),
-        otherCategories: categories.slice(1, 3).map(category => category.name)
+        otherCategories: categories.slice(1, numTopics).map(category => category.name)
     };
 
 }
