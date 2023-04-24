@@ -35,7 +35,7 @@ export function generateSvg(graph) {
 
             image.attr("x", function (d) { return d.x - 40 * d.rank; })
                 .attr("y", function(d) { return d.y - 40 * d.rank; })
-                .append("title").text(d => `${d.login}\nrank: ${d.index + 1}\nscore: ${d.rank.toFixed(2)}`);
+                .append("title").text(d => `${d.login}\nrank: ${d.index + 1}\nscore: ${d.rank.toFixed(2)}\ncategories: ${d.categories.join(', ')}`);
 
             resolve(d3n.svgString());
         });     
