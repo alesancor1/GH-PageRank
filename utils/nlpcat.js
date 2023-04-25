@@ -76,7 +76,7 @@ export async function getCategoriesFromUser(node, numTopics = 4) {
     categories.sort((a, b) => b.count - a.count);
 
     return {
-        mainCategory: categories.slice(0, 1).map(category => category.name),
+        mainCategory: categories.slice(0, 1).map(category => category.name)[0],
         otherCategories: categories.slice(1, numTopics).map(category => category.name)
     };
 

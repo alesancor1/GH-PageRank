@@ -22,6 +22,7 @@ export function generateSvg(graph) {
         const defs = _createDefs(svg);
         const [link,] = _createLinks(svg, defs, graph);
         const [circle, image,] = _createNodes(svg, defs, graph);    
+        const influence = _createInfluenceRegion(svg, graph);
 
         // Generate tooltip
         const _tooltip = (node) => {
@@ -43,6 +44,10 @@ export function generateSvg(graph) {
 
             image.attr("x", function (d) { return d.x - 40 * d.rank; })
                 .attr("y", function(d) { return d.y - 40 * d.rank; })
+                .append("title").text(d => _tooltip(d));
+
+            influence.attr("cx", function (d) { return d.x; })
+                .attr("cy", function(d) { return d.y; })
                 .append("title").text(d => _tooltip(d));
 
             resolve(d3n.svgString());
@@ -108,6 +113,44 @@ function _createNodes(svg, defs, graph) {
         .style("visibility", "hidden");
 
     return [circle, image, label];
+}
+
+function _createInfluenceRegion(svg, graph) {
+    const c = {};
+    const colormap = (category, idx) => {
+        if (!c[category]) c[category] = d3.interpolateSinebow((Math.random() * idx ) % 1);
+        return c[category];
+    }
+        
+    const influence = svg.selectAll(null)
+        .data(graph.nodes)
+        .join("circle")
+        .attr("r", d => 100 * d.rank)
+        .style("fill", (d, i) => colormap(d.mainCategory ?? "influence", i))
+        .style("opacity", "0.25")
+        .style("visibility", d => d.mainCategory ? "visible" : "hidden");
+    
+    /* Legend */
+    svg.selectAll(null)
+        .data(Object.keys(c))
+        .join("circle")
+        .attr("r", 5)
+        .attr("cx", (d, i) => 20 + i * 120)
+        .attr("cy", 20)
+        .style("fill", d => colormap(d))
+        .style("opacity", "0.25")
+    
+    svg.selectAll(null)
+        .data(Object.keys(c))
+        .join("text")
+        .text(d => d)
+        .attr("x", (d, i) => 30 + i * 120)
+        .attr("y", 24)
+        .attr("font-size", 10)
+        .style("fill", (d, i) => colormap(d,i))
+        .style("font-family", "Arial")
+    
+    return influence;
 }
 
 function _createSimulation(graph, width, height) {
