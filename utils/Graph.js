@@ -31,10 +31,21 @@ export class Graph {
      * @param {Node} node - Graph node to rank
      * @param {number} rank - PageRank rank
      */
-    rankNode(node, rank, mainCategory, otherCategories) {
+    rankNode(node, rank) {
         let n = this.nodes.find(n => n.login === node.login);
         if (n) n.rank = rank;
-        else this.nodes.push({ login: node.login, rank, avatarUrl: node.avatarUrl, mainCategory, otherCategories });
+        else this.nodes.push({ login: node.login, rank, avatarUrl: node.avatarUrl});
+    }
+
+    /** Clasify an existing node
+     * @param {Node} node - Graph node to clasify
+     * @param {string} mainCategory - Main category
+     * @param {string[]} otherCategories - Other categories
+     */
+    clasifyNode(node, mainCategory, otherCategories) {
+        let n = this.nodes.find(n => n.login === node.login);
+        n.mainCategory = mainCategory;
+        n.otherCategories = otherCategories;
     }
 
     /** Add edges to the graph based on a node's followers

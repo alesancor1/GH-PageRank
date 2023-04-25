@@ -23,6 +23,14 @@ export function generateSvg(graph) {
         const [link,] = _createLinks(svg, defs, graph);
         const [circle, image,] = _createNodes(svg, defs, graph);    
 
+        // Generate tooltip
+        const _tooltip = (node) => {
+            let text = `${node.login}\nrank: ${node.index + 1}\nscore: ${node.rank.toFixed(2)}`;
+            if (node.mainCategory) text += `\nmain category: ${node.mainCategory}`;
+            if (node.otherCategories) text += `\nother categories: ${node.otherCategories}`;
+            return text;
+        }
+
         //force simulation
         _createSimulation(graph, width, height).on("end", () => {
             link.attr("x1", function(d) { return d.source.x; })
@@ -35,7 +43,7 @@ export function generateSvg(graph) {
 
             image.attr("x", function (d) { return d.x - 40 * d.rank; })
                 .attr("y", function(d) { return d.y - 40 * d.rank; })
-                .append("title").text(d => `${d.login}\nrank: ${d.index + 1}\nscore: ${d.rank.toFixed(2)}\nmain category: ${d.mainCategory}\nother categories: ${d.otherCategories}`);
+                .append("title").text(d => _tooltip(d));
 
             resolve(d3n.svgString());
         });     

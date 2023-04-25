@@ -17,19 +17,20 @@ const options = yargs(hideBin(process.argv))
     .option("limit", { alias: "l", describe: "Limit number of followers to fetch", default: 10 })
     .option("format", { alias: "f", describe: "Output format", choices: ["json", "svg"], default: "svg" })
     .option("output", { alias: "o", describe: "Output file name", type: "string" })
+    .option("classify-nodes", {describe: "Classify each user based on their repositories", type: "boolean"})
     .version(false)
     .help(true)
     .parse();
 
 
 const [ username, token ] = options._;
-const { dampingFactor, depth, limit, output, format } = options;
+const { dampingFactor, depth, limit, output, format, classifyNodes } = options;
 process.env.GITHUB_TOKEN = token;
 
 /* Main program */
 const graph = new Graph();
 
-pageRank(username, graph, dampingFactor, depth, limit).then(() => {
+pageRank(username, graph, dampingFactor, depth, limit, classifyNodes).then(() => {
     const result = graph.sorted();
     
     if (format === "svg") {

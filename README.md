@@ -17,3 +17,4 @@ npx gh-pagerank <gh-username> <gh-token> [options]
 | `-l`, `--limit` | Limit the number of followers to retrieve (default: 10) |
 | `-f`, `--format` | Output format: json/svg (default: `svg`) |
 | `-o`, `--output` | Output file name. stdout (json) / temp.svg (svg) |
+| `--classify-nodes`| Classify nodes based on their repo description  |
